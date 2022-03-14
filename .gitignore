@@ -114,7 +114,7 @@ venv.bak/
 .spyderproject
 .spyproject
 
-# Rope project settings
+# Rope project settingsPy
 .ropeproject
 
 # mkdocs documentation
@@ -128,3 +128,4 @@ dmypy.json
 # Pyre type checker
 .pyre/
 api_env
+tokens.txt
