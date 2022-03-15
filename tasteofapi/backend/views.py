@@ -16,6 +16,14 @@ class MainScoreView(ModelViewSet):
 
         return Response(data, status=status.HTTP_200_OK)
 
+    def put(self, request):
+        score_model = self.queryset[0]
+        serializer = FullScoreSerializer(score_model, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(score_model.score_data, status=status.HTTP_200_OK)
+        return Response(score_model.score_data, status=status.HTTP_400_BAD_REQUEST)
+
 
 class InstrumentView(ModelViewSet):
     queryset = Instrument.objects.all()
@@ -29,5 +37,10 @@ class InstrumentView(ModelViewSet):
         return Response(data, status=status.HTTP_200_OK)
 
     def put(self, request):
-        pass
+        instrument_model = self.queryset[0]
+        serializer = InstrumentSerializer(instrument_model, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(instrument_model.score_data, status=status.HTTP_200_OK)
+        return Response(instrument_model.score_data, status=status.HTTP_400_BAD_REQUEST)
 
