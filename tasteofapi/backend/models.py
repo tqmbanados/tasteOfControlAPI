@@ -5,6 +5,7 @@ class Instrument(models.Model):
     instrument = models.CharField(max_length=16)
     score_data = models.TextField(default="{}")
     measure = models.IntegerField()
+    duration = models.IntegerField(default=6)
 
     def __str__(self):
         return str(self.instrument)

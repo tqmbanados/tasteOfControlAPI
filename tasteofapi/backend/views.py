@@ -33,7 +33,8 @@ class InstrumentView(ModelViewSet):
         instrument_name = request.get('instrument')
         instrument = self.queryset.filter(instrument=instrument_name)[0]
         data = {'instrument': instrument_name,
-                'score_data': instrument.score_data}
+                'score_data': instrument.score_data,
+                'duration': instrument.duration}
         return Response(data, status=status.HTTP_200_OK)
 
     def put(self, request):

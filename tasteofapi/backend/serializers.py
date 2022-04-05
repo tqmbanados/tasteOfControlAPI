@@ -18,4 +18,4 @@ class FullScoreSerializer(serializers.ModelSerializer):
 class InstrumentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Instrument
-        fields = ('score_data', 'instrument')
+        fields = ('score_data', 'instrument', 'duration')
