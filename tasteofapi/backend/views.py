@@ -38,10 +38,29 @@ class InstrumentView(ModelViewSet):
         return Response(data, status=status.HTTP_200_OK)
 
     def put(self, request):
-        instrument_model = self.queryset[0]
+        instrument_name = request.get('instrument')
+        instrument_model = self.queryset.filter(instrument=instrument_name)
         serializer = InstrumentSerializer(instrument_model, data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(instrument_model.score_data, status=status.HTTP_200_OK)
         return Response(instrument_model.score_data, status=status.HTTP_400_BAD_REQUEST)
 
+
+class ActorView(ModelViewSet):
+    queryset = Actor.objects.all()
+    serializer_class = ActorSerializer
+
+    def get(self, request):
+        actor = self.queryset[0]
+        data = {'action': actor.action,
+                'stage': actor.stage}
+        return Response(data, status=status.HTTP_200_OK)
+
+    def put(self, request):
+        actor_model = self.queryset[0]
+        serializer = ActorSerializer(actor_model, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(actor_model.action, status=status.HTTP_200_OK)
+        return Response(actor_model.action, status=status.HTTP_400_BAD_REQUEST)
