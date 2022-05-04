@@ -6,7 +6,7 @@ from .models import FullScore, Instrument, Actor
 class ActorSerializer(serializers.ModelSerializer):
     class Meta:
         model = Actor
-        fields = ('action', 'stage',)
+        fields = ('action', 'stage', 'number')
 
 
 class FullScoreSerializer(serializers.ModelSerializer):
@@ -18,4 +18,4 @@ class FullScoreSerializer(serializers.ModelSerializer):
 class InstrumentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Instrument
-        fields = ('score_data', 'instrument', 'duration')
+        fields = ('score_data', 'instrument', 'duration', 'measure')

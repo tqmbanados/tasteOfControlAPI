@@ -32,9 +32,13 @@ class InstrumentView(APIView):
 
     def get(self, request):
         instrument_name = request.query_params.get('instrument')
+        request_measure = request.query_params.get('measure')
         query = self.queryset.filter(instrument=instrument_name)
         if len(query) > 0:
             instrument = query[0]
+            measure = instrument.measure
+            if measure != request_measure:
+                print("WARNING: REQUESTED MEASURE DIFFERENT FROM HELD MEASURE")
             data = {'instrument': instrument.instrument,
                     'score_data': instrument.score_data,
                     'duration': instrument.duration}
@@ -57,10 +61,18 @@ class ActorView(APIView):
     serializer_class = ActorSerializer
 
     def get(self, request):
-        actor = self.queryset[0]
-        data = {'action': actor.action,
-                'stage': actor.stage}
-        return Response(data, status=status.HTTP_200_OK)
+        number = request.query_params.get('number')
+        query = self.queryset.filter(number=number)
+        if len(query) > 0:
+            actor = query[0]
+            data = {'action': actor.action,
+                    'stage': actor.stage}
+            return Response(data, status=status.HTTP_200_OK)
+        else:
+            actor = self.queryset[-1]
+            data = {'action': actor.action,
+                    'stage': actor.stage}
+            return Response(data, status=status.HTTP_206_PARTIAL_CONTENT)
 
     def put(self, request):
         actor_model = self.queryset[0]
