@@ -6,9 +6,11 @@ from .views import MainScoreView, InstrumentView, ActorView
 
 router = routers.DefaultRouter()
 router.register(r'', MainScoreView)
-router.register(r'instrument', InstrumentView)
-router.register(r'actor', ActorView)
+router.register(r'instrument', InstrumentView, basename='instrument/')
+router.register(r'actor', ActorView, basename='actor/')
 
 urlpatterns = [
-   path('', include(router.urls)),
+   path('', MainScoreView.as_view()),
+   path('instrument', InstrumentView.as_view()),
+   path('actor', ActorView.as_view())
 ]

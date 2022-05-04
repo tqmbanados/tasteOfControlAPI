@@ -1,12 +1,13 @@
 from django.shortcuts import render
 from .models import FullScore, Actor, Instrument
 from rest_framework.viewsets import ModelViewSet
+from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from .serializers import FullScoreSerializer, ActorSerializer, InstrumentSerializer
 
 
-class MainScoreView(ModelViewSet):
+class MainScoreView(APIView):
     queryset = FullScore.objects.all()
     serializer_class = FullScoreSerializer
 
@@ -25,20 +26,25 @@ class MainScoreView(ModelViewSet):
         return Response(score_model.score_data, status=status.HTTP_400_BAD_REQUEST)
 
 
-class InstrumentView(ModelViewSet):
+class InstrumentView(APIView):
     queryset = Instrument.objects.all()
     serializer_class = InstrumentSerializer
 
     def get(self, request):
-        instrument_name = request.get('instrument')
-        instrument = self.queryset.filter(instrument=instrument_name)[0]
-        data = {'instrument': instrument_name,
-                'score_data': instrument.score_data,
-                'duration': instrument.duration}
-        return Response(data, status=status.HTTP_200_OK)
+        print(request.query_params)
+        instrument_name = request.query_params.get('instrument')
+        query = self.queryset.filter(instrument=instrument_name)
+        if len(query) > 0:
+            instrument = query[0]
+            data = {'instrument': instrument.instrument,
+                    'score_data': instrument.score_data,
+                    'duration': instrument.duration}
+            return Response(data, status=status.HTTP_200_OK)
+        data = {'instrument': "error"}
+        return Response(data, status=status.HTTP_400_BAD_REQUEST)
 
     def put(self, request):
-        instrument_name = request.get('instrument')
+        instrument_name = request.data.get('instrument')
         instrument_model = self.queryset.filter(instrument=instrument_name)
         serializer = InstrumentSerializer(instrument_model, data=request.data)
         if serializer.is_valid():
@@ -47,7 +53,7 @@ class InstrumentView(ModelViewSet):
         return Response(instrument_model.score_data, status=status.HTTP_400_BAD_REQUEST)
 
 
-class ActorView(ModelViewSet):
+class ActorView(APIView):
     queryset = Actor.objects.all()
     serializer_class = ActorSerializer
 
