@@ -13,7 +13,7 @@ class Instrument(models.Model):
 
 class Actor(models.Model):
     action = models.CharField(max_length=16, default="None")
-    stage = models.IntegerField(default=0)
+    stage = models.CharField(max_length=16, default="0-0")
 
     def __str__(self):
         return "Actor"

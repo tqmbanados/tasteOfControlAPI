@@ -31,7 +31,6 @@ class InstrumentView(APIView):
     serializer_class = InstrumentSerializer
 
     def get(self, request):
-        print(request.query_params)
         instrument_name = request.query_params.get('instrument')
         query = self.queryset.filter(instrument=instrument_name)
         if len(query) > 0:
@@ -45,7 +44,7 @@ class InstrumentView(APIView):
 
     def put(self, request):
         instrument_name = request.data.get('instrument')
-        instrument_model = self.queryset.filter(instrument=instrument_name)
+        instrument_model = self.queryset.filter(instrument=instrument_name)[0]
         serializer = InstrumentSerializer(instrument_model, data=request.data)
         if serializer.is_valid():
             serializer.save()
