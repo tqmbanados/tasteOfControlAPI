@@ -12,7 +12,7 @@ class MainScoreView(APIView):
     serializer_class = FullScoreSerializer
 
     def get(self, request):
-        if len(self.queryset) > 0:
+        if len(self.queryset.all()) > 0:
             score_model = self.queryset[0]
             data = {'score_data': score_model.score_data}
             return Response(data, status=status.HTTP_200_OK)
@@ -72,7 +72,7 @@ class ActorView(APIView):
                     'stage': actor.stage}
             return Response(data, status=status.HTTP_200_OK)
         else:
-            if len(self.queryset) > 0:
+            if len(self.queryset.all()) > 0:
                 actor = self.queryset[-1]
                 data = {'action': actor.action,
                         'stage': actor.stage}
