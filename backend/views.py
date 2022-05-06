@@ -12,10 +12,12 @@ class MainScoreView(APIView):
     serializer_class = FullScoreSerializer
 
     def get(self, request):
-        score_model = self.queryset[0]
-        data = {'score_data': score_model.score_data}
-
-        return Response(data, status=status.HTTP_200_OK)
+        if len(self.queryset) > 0:
+            score_model = self.queryset[0]
+            data = {'score_data': score_model.score_data}
+            return Response(data, status=status.HTTP_200_OK)
+        else:
+            return Response({'empty': None}, status=status.HTTP_204_NO_CONTENT)
 
     def put(self, request):
         score_model = self.queryset[0]
@@ -44,8 +46,8 @@ class InstrumentView(APIView):
                     'score_data': instrument.score_data,
                     'duration': instrument.duration}
             return Response(data, status=status.HTTP_200_OK)
-        data = {'instrument': "error"}
-        return Response(data, status=status.HTTP_400_BAD_REQUEST)
+        data = {'instrument': None}
+        return Response(data, status=status.HTTP_204_NO_CONTENT)
 
     def put(self, request):
         instrument_name = request.data.get('instrument')
@@ -70,10 +72,13 @@ class ActorView(APIView):
                     'stage': actor.stage}
             return Response(data, status=status.HTTP_200_OK)
         else:
-            actor = self.queryset[-1]
-            data = {'action': actor.action,
-                    'stage': actor.stage}
-            return Response(data, status=status.HTTP_206_PARTIAL_CONTENT)
+            if len(self.queryset) > 0:
+                actor = self.queryset[-1]
+                data = {'action': actor.action,
+                        'stage': actor.stage}
+                return Response(data, status=status.HTTP_206_PARTIAL_CONTENT)
+            else:
+                return Response({'action': None}, status=status.HTTP_204_NO_CONTENT)
 
     def put(self, request):
         actor_model = self.queryset[0]
