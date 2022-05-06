@@ -38,7 +38,8 @@ class InstrumentView(APIView):
             instrument = query[0]
             measure = instrument.measure
             if measure != request_measure:
-                print("WARNING: REQUESTED MEASURE DIFFERENT FROM HELD MEASURE")
+                print("WARNING: REQUESTED MEASURE DIFFERENT FROM HELD MEASURE\n",
+                      f'Requested: {request_measure}. Current: {measure}')
             data = {'instrument': instrument.instrument,
                     'score_data': instrument.score_data,
                     'duration': instrument.duration}
