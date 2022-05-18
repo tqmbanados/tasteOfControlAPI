@@ -4,7 +4,10 @@ from rest_framework.viewsets import ModelViewSet
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from .serializers import FullScoreSerializer, ActorSerializer, InstrumentSerializer
+from rest_framework.parsers import MultiPartParser, FormParser
+from .serializers import (FullScoreSerializer, ActorSerializer,
+                          InstrumentSerializer, ImageSerializer)
+import os
 
 
 class MainScoreView(APIView):
@@ -57,6 +60,40 @@ class InstrumentView(APIView):
             serializer.save()
             return Response(instrument_model.score_data, status=status.HTTP_200_OK)
         return Response(instrument_model.score_data, status=status.HTTP_400_BAD_REQUEST)
+
+
+class ImageView(APIView):
+    queryset = Instrument.objects.all()
+    serializer_class = ImageSerializer
+    parser_classes = [MultiPartParser, FormParser]
+
+    def get(self, request, format=None):
+        instrument_name = request.query_params.get('instrument')
+        request_measure = request.query_params.get('measure')
+        query = self.queryset.filter(instrument=instrument_name)
+        if len(query) > 0:
+            instrument = query.first()
+            serialized = self.serializer_class()
+            measure = instrument.measure
+            if measure != int(request_measure):
+                print("WARNING: REQUESTED MEASURE DIFFERENT FROM HELD MEASURE\n",
+                      f'Requested: {request_measure}. Current: {measure}')
+            if serialized.is_valid():
+                return Response(serialized.data, status=status.HTTP_200_OK)
+            else:
+                return Response(serialized.errors, status=status.HTTP_400_BAD_REQUEST)
+        return Response('hi', status=status.HTTP_204_NO_CONTENT)
+
+    def patch(self, request, format=None):
+        instrument_model = self.queryset.filter(instrument=request.data.get('instrument')).first()
+        serializer = self.serializer_class(instrument_model, data=request.data)
+
+        if serializer.is_valid():
+            instrument_model.image_data = request.FILES['media']
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class ActorView(APIView):
